@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulação — Parque Ilhabela</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f4f0;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #E1F5EE;
+      color: #0F6E56;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .header .subtitulo {
+      font-size: 14px;
+      color: #888;
+    }
+
+    .header .nome-cliente {
+      font-size: 15px;
+      color: #444;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* VALOR IMÓVEL */
+    .valor-imovel {
+      background: #fff;
+      border: 1px solid #e5e3db;
+      border-radius: 14px;
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .valor-imovel .label {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .valor-imovel .valor {
+      font-size: 30px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    /* GRID */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e3db;
+      border-radius: 14px;
+      padding: 1rem;
+    }
+
+    .card .label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .card .valor {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .card .sub {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 3px;
+    }
+
+    .card.verde {
+      background: #E1F5EE;
+      border-color: #9FE1CB;
+    }
+    .card.verde .label { color: #0F6E56; }
+    .card.verde .valor { color: #085041; font-size: 22px; }
+    .card.verde .sub { color: #1D9E75; }
+
+    .card.laranja {
+      background: #FAEEDA;
+      border-color: #FAC775;
+    }
+    .card.laranja .label { color: #854F0B; }
+    .card.laranja .valor { color: #633806; }
+    .card.laranja .sub { color: #BA7517; }
+
+    /* SEÇÃO */
+    .secao-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 8px;
+      margin-top: 1.25rem;
+    }
+
+    /* COMPOSIÇÃO */
+    .componentes {
+      background: #fff;
+      border: 1px solid #e5e3db;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .comp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 1rem;
+      border-bottom: 1px solid #f0ede6;
+      font-size: 14px;
+    }
+
+    .comp-row:last-child { border-bottom: none; }
+
+    .comp-row.total {
+      background: #f5f4f0;
+      font-weight: 600;
+    }
+
+    .comp-row .nome { color: #666; }
+    .comp-row .val { color: #1a1a1a; }
+    .comp-row.total .nome { color: #333; }
+
+    /* RESUMO */
+    .resumo {
+      background: #fff;
+      border: 1px solid #e5e3db;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .resumo-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 1rem;
+      border-bottom: 1px solid #f0ede6;
+      font-size: 13px;
+    }
+
+    .resumo-row:last-child { border-bottom: none; }
+    .resumo-row .rk { color: #888; }
+    .resumo-row .rv { color: #1a1a1a; font-weight: 500; text-align: right; }
+
+    /* DISCLAIMER */
+    .disclaimer {
+      background: #fff;
+      border: 1px solid #e5e3db;
+      border-left: 3px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 11.5px;
+      color: #aaa;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e3db;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.7;
+    }
+
+    .footer strong {
+      color: #888;
+      font-weight: 500;
+    }
+
+    /* PRINT */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .btn-print { display: none !important; }
+    }
+
+    .btn-print {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.15s;
+    }
+    .btn-print:hover { background: #333; }
+
+    .vazio {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="vazio">Carregando simulação...</div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    function p(key) {
+      return params.get(key) || '';
+    }
+
+    function render() {
+      const valorImovel  = p('valorImovel');
+      const parcela      = p('parcela');
+      const entrada      = p('entrada');
+      const desconto     = p('desconto');
+      const amortizacao  = p('amortizacao');
+      const seguroDFI    = p('seguroDFI');
+      const seguroMIP    = p('seguroMIP');
+      const taxaAdmin    = p('taxaAdmin');
+      const renda        = p('renda');
+      const fgts         = p('fgts');
+      const prazoObra    = p('prazoObra');
+      const cidade       = p('cidade');
+      const nome         = p('nome');
+
+      if (!valorImovel) {
+        document.getElementById('app').innerHTML = '<div class="vazio">Nenhuma simulação encontrada.<br>Volte e gere novamente.</div>';
+        return;
+      }
+
+      const nomeHtml = nome
+        ? `<div class="nome-cliente">Olá, <strong>${escHtml(nome)}</strong> 👋</div>`
+        : '';
+
+      const cidadeExibir = cidade
+        ? cidade.replace(/- RJ/i, '').trim() + ', RJ'
+        : 'Campos dos Goytacazes, RJ';
+
+      const descontoHtml = desconto && desconto !== 'R$ 0,00'
+        ? `<div class="sub">+ desconto de ${escHtml(desconto)}</div>`
+        : '';
+
+      const rows = [];
+      if (renda)     rows.push(['Renda familiar', escHtml(renda)]);
+      if (fgts)      rows.push(['FGTS há mais de 3 anos', fgts === 'Sim' ? 'Sim ✓' : fgts]);
+      if (cidadeExibir) rows.push(['Cidade', escHtml(cidadeExibir)]);
+      if (prazoObra) rows.push(['Prazo de obra', escHtml(prazoObra)]);
+
+      const resumoHtml = rows.map(([k, v]) =>
+        `<div class="resumo-row"><span class="rk">${k}</span><span class="rv">${v}</span></div>`
+      ).join('');
+
+      const compRows = [
+        amortizacao ? ['Amortização + Juros', amortizacao] : null,
+        seguroDFI   ? ['Seguro DFI', seguroDFI] : null,
+        seguroMIP   ? ['Seguro MIP', seguroMIP] : null,
+        taxaAdmin   ? ['Taxa de administração', taxaAdmin] : null,
+      ].filter(Boolean);
+
+      const compHtml = compRows.map(([n, v]) =>
+        `<div class="comp-row"><span class="nome">${escHtml(n)}</span><span class="val">${escHtml(v)}</span></div>`
+      ).join('') + `<div class="comp-row total"><span class="nome">Total da parcela</span><span class="val">${escHtml(parcela)}</span></div>`;
+
+      document.getElementById('app').innerHTML = `
+        <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+
+        <div class="header">
+          <div class="badge">Minha Casa Minha Vida — FGTS</div>
+          <h1>Simulação de Financiamento</h1>
+          <div class="subtitulo">Parque Ilhabela · ${escHtml(cidadeExibir)}</div>
+          ${nomeHtml}
+        </div>
+
+        <div class="valor-imovel">
+          <div class="label">Valor do imóvel</div>
+          <div class="valor">${escHtml(valorImovel)}</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card verde">
+            <div class="label">Parcela mensal</div>
+            <div class="valor">${escHtml(parcela)}</div>
+            <div class="sub">Sistema PRICE FGTS</div>
+          </div>
+          <div class="card laranja">
+            <div class="label">Entrada necessária</div>
+            <div class="valor">${escHtml(entrada)}</div>
+            ${descontoHtml}
+          </div>
+        </div>
+
+        <div class="secao-label">Composição da parcela</div>
+        <div class="componentes">${compHtml}</div>
+
+        ${rows.length > 0 ? `
+        <div class="secao-label">Perfil do cliente</div>
+        <div class="resumo">${resumoHtml}</div>
+        ` : ''}
+
+        <div class="disclaimer">
+          Esta simulação foi gerada pelo sistema da Caixa Econômica Federal e não representa proposta de crédito. Valores sujeitos à aprovação de crédito e disponibilidade de recursos na região.
+        </div>
+
+        <div class="footer">
+          <p><strong>Pedro Pires Imóveis</strong><br>@pedroconsultor.campos · Correspondente MRV</p>
+        </div>
+      `;
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    render();
+  </script>
+</body>
+</html>

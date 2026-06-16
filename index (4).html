@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulação MCMV — Pedro Pires Imóveis</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f4f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e5e3db;
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .logo .nome {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .logo .sub {
+      font-size: 13px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 15px;
+      color: #1a1a1a;
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 1.25rem;
+    }
+
+    input[type="text"]:focus {
+      border-color: #1D9E75;
+      background: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #444;
+      background: #fafafa;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      border-color: #1D9E75;
+      background: #fff;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 6px;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      background: #1D9E75;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn:hover { background: #0F6E56; }
+    .btn:active { transform: scale(0.98); }
+
+    .erro {
+      display: none;
+      margin-top: 1rem;
+      padding: 10px 14px;
+      background: #FCEBEB;
+      border: 1px solid #F7C1C1;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #A32D2D;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="nome">Pedro Pires Imóveis</div>
+      <div class="sub">Gerador de apresentação — Parque Ilhabela</div>
+    </div>
+
+    <label for="nome-cliente">Nome do cliente</label>
+    <input type="text" id="nome-cliente" placeholder="Ex: João da Silva" />
+
+    <label for="texto-simulacao">Cole aqui o Ctrl+A da simulação da Caixa</label>
+    <textarea id="texto-simulacao" placeholder="Selecione tudo na página do simulador (Ctrl+A), copie (Ctrl+C) e cole aqui (Ctrl+V)..."></textarea>
+    <div class="hint">O sistema extrai os dados automaticamente.</div>
+
+    <button class="btn" onclick="gerar()">Gerar apresentação →</button>
+    <div class="erro" id="erro">Não foi possível extrair os dados. Verifique se o texto copiado é do simulador da Caixa.</div>
+  </div>
+
+  <script>
+    function extrair(texto) {
+      const get = (regex, grupo = 1) => {
+        const m = texto.match(regex);
+        return m ? m[grupo].trim() : null;
+      };
+
+      const valorImovel     = get(/Valor do im[oó]vel:\s*(R\$\s*[\d.,]+)/i);
+      const entrada         = get(/Valor de entrada:\s*(R\$\s*[\d.,]+)/i);
+      const desconto        = get(/Desconto:\s*(R\$\s*[\d.,]+)/i);
+      const parcela         = get(/Primeira Presta[cç][aã]o\s*(R\$\s*[\d.,]+)/i);
+      const amortizacao     = get(/Amortiza[cç][aã]o \+ Juros\s*(R\$\s*[\d.,]+)/i);
+      const seguroDFI       = get(/Seguro DFI\s*(R\$\s*[\d.,]+)/i);
+      const seguroMIP       = get(/Seguro MIP\s*(R\$\s*[\d.,]+)/i);
+      const taxaAdmin       = get(/Taxa de administra[cç][aã]o\s*(R\$\s*[\d.,]+)/i);
+      const renda           = get(/Renda Familiar:\s*(R\$\s*[\d.,]+)/i);
+      const fgts            = get(/FGTS h[aá] mais de 3 anos:\s*(\w+)/i);
+      const prazoObra       = get(/Prazo de Obra:\s*(\d+\s*meses)/i);
+      const cidade          = get(/Cidade:\s*([^\n]+)/i);
+
+      if (!valorImovel || !parcela) return null;
+
+      return { valorImovel, entrada, desconto, parcela, amortizacao, seguroDFI, seguroMIP, taxaAdmin, renda, fgts, prazoObra, cidade };
+    }
+
+    function gerar() {
+      const texto = document.getElementById('texto-simulacao').value;
+      const nome  = document.getElementById('nome-cliente').value.trim();
+      const erro  = document.getElementById('erro');
+      erro.style.display = 'none';
+
+      const dados = extrair(texto);
+      if (!dados) {
+        erro.style.display = 'block';
+        return;
+      }
+
+      const params = new URLSearchParams({ nome, ...dados });
+      window.open('apresentacao.html?' + params.toString(), '_blank');
+    }
+  </script>
+</body>
+</html>
