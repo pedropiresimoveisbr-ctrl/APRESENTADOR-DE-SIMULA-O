@@ -150,18 +150,24 @@
         return m ? m[grupo].trim() : null;
       };
 
-      const valorImovel     = get(/Valor do im[oó]vel:\s*(R\$\s*[\d.,]+)/i);
-      const entrada         = get(/Valor de entrada:\s*(R\$\s*[\d.,]+)/i);
-      const desconto        = get(/Desconto:\s*(R\$\s*[\d.,]+)/i);
-      const parcela         = get(/Primeira Presta[cç][aã]o\s*(R\$\s*[\d.,]+)/i);
-      const amortizacao     = get(/Amortiza[cç][aã]o \+ Juros\s*(R\$\s*[\d.,]+)/i);
-      const seguroDFI       = get(/Seguro DFI\s*(R\$\s*[\d.,]+)/i);
-      const seguroMIP       = get(/Seguro MIP\s*(R\$\s*[\d.,]+)/i);
-      const taxaAdmin       = get(/Taxa de administra[cç][aã]o\s*(R\$\s*[\d.,]+)/i);
-      const renda           = get(/Renda Familiar:\s*(R\$\s*[\d.,]+)/i);
-      const fgts            = get(/FGTS h[aá] mais de 3 anos:\s*(\w+)/i);
-      const prazoObra       = get(/Prazo de Obra:\s*(\d+\s*meses)/i);
-      const cidade          = get(/Cidade:\s*([^\n]+)/i);
+      // Valor do imóvel — aparece duas vezes, pega a primeira
+      const valorImovel = get(/Valor do im[oó]vel:\s*(R\$\s*[\d.,]+)/i);
+      const entrada     = get(/Valor de entrada:\s*(R\$\s*[\d.,]+)/i);
+      const desconto    = get(/Desconto:\s*(R\$\s*[\d.,]+)/i);
+
+      // Parcela: "Primeira Prestação<tab>Juros...<newline>CET...<newline>R$ X"
+      // O valor vem na linha logo após "CET - Planilha"
+      const parcela = get(/CET\s*-\s*Planilha[\r\n]+(R\$\s*[\d.,]+)/i)
+                   || get(/Primeira Presta[cç][aã]o[\s\S]{0,80}?(R\$\s*[\d.,]+)/i);
+
+      const amortizacao = get(/Amortiza[cç][aã]o\s*\+\s*Juros\s*(R\$\s*[\d.,]+)/i);
+      const seguroDFI   = get(/Seguro DFI\s*(R\$\s*[\d.,]+)/i);
+      const seguroMIP   = get(/Seguro MIP\s*(R\$\s*[\d.,]+)/i);
+      const taxaAdmin   = get(/Taxa de administra[cç][aã]o\s*(R\$\s*[\d.,]+)/i);
+      const renda       = get(/Renda Familiar:\s*(R\$\s*[\d.,]+)/i);
+      const fgts        = get(/FGTS h[aá] mais de 3 anos:\s*(\w+)/i);
+      const prazoObra   = get(/Prazo de Obra:\s*(\d+\s*meses)/i);
+      const cidade      = get(/Cidade:\s*([^\n\r]+)/i);
 
       if (!valorImovel || !parcela) return null;
 
